@@ -1,24 +1,15 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "builds": [
-    {
-      "src": "index.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
+  "functions": {
+    "index.js": {
+      "runtime": "@vercel/node@20.x"
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/(bundle\\.(js|css))",
-      "dest": "/public/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.js"
+      "source": "/(.*)",
+      "destination": "/index.js"
     }
   ]
 }
