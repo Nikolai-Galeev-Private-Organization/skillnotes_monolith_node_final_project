@@ -1,0 +1,7 @@
+**/node_modules/**
+.vscode/**
+.idea/**
+public/bundle.*
+node_modules/
+public/
+migrations/
