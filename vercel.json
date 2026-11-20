@@ -2,9 +2,7 @@
   "version": 2,
   "buildCommand": "npm run build",
   "functions": {
-    "index.js": {
-      "runtime": "@vercel/node@20.x"
-    }
+    "index.js": {}
   },
   "rewrites": [
     {
