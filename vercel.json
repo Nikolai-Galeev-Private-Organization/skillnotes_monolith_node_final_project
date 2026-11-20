@@ -12,6 +12,10 @@
   ],
   "routes": [
     {
+      "src": "/(bundle\\.(js|css))",
+      "dest": "/public/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.js"
     }
