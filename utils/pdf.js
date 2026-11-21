@@ -1,26 +1,23 @@
 const puppeteer = require("puppeteer-core");
-const chromium = require("@sparticuz/chromium");
+const chromium = require("@sparticuz/chromium-min");
 const marked = require("marked");
-const path = require("path");
 
 async function getBrowserOptions() {
-  // На Vercel / Linux используем @sparticuz/chromium
+  // На Vercel / Linux используем @sparticuz/chromium-min
   if (process.env.VERCEL || process.env.NODE_ENV === "production") {
-    const executablePath = await chromium.executablePath();
-    const execDir = path.dirname(executablePath);
-
-    // Критически важно для Vercel: путь к системным библиотекам
-    process.env.LD_LIBRARY_PATH = execDir;
+    const remotePack = process.env.CHROMIUM_REMOTE_EXEC_PATH;
+    if (!remotePack) {
+      throw new Error("CHROMIUM_REMOTE_EXEC_PATH is not set on Vercel.");
+    }
 
     return {
       args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath,
+      executablePath: await chromium.executablePath(remotePack),
       headless: chromium.headless,
     };
   }
 
-  // Локально на Windows используем установленный Chrome или Edge
+  // Локально на Windows используем установленный Chrome
   return {
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -40,9 +37,7 @@ async function generatePdfBuffer(title, markdown) {
     </style></head>
     <body><h1>${title}</h1>${marked.parse(markdown)}</body></html>`;
 
-  // Получаем правильные опции для текущей среды (Vercel или Windows)
   const options = await getBrowserOptions();
-
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
